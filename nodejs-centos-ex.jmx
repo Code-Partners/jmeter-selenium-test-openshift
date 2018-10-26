@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="4.0" jmeter="4.0 r1823414">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">stopthread</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">${__P(loops,1)}</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(users,1)}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="URL" elementType="Argument">
+              <stringProp name="Argument.name">URL</stringProp>
+              <stringProp name="Argument.value">${__P(url,)}</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="USERNAME" elementType="Argument">
+              <stringProp name="Argument.name">USERNAME</stringProp>
+              <stringProp name="Argument.value">${__P(username,)}</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="PASSWORD" elementType="Argument">
+              <stringProp name="Argument.name">PASSWORD</stringProp>
+              <stringProp name="Argument.value">${__P(password,)}</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </Arguments>
+        <hashTree/>
+        <com.googlecode.jmeter.plugins.webdriver.config.ChromeDriverConfig guiclass="com.googlecode.jmeter.plugins.webdriver.config.gui.ChromeDriverConfigGui" testclass="com.googlecode.jmeter.plugins.webdriver.config.ChromeDriverConfig" testname="jp@gc - Chrome Driver Config" enabled="true">
+          <stringProp name="WebDriverConfig.proxy_type">DIRECT</stringProp>
+          <stringProp name="WebDriverConfig.proxy_pac_url"></stringProp>
+          <stringProp name="WebDriverConfig.http_host"></stringProp>
+          <intProp name="WebDriverConfig.http_port">8080</intProp>
+          <boolProp name="WebDriverConfig.use_http_for_all_protocols">true</boolProp>
+          <stringProp name="WebDriverConfig.https_host"></stringProp>
+          <intProp name="WebDriverConfig.https_port">8080</intProp>
+          <stringProp name="WebDriverConfig.ftp_host"></stringProp>
+          <intProp name="WebDriverConfig.ftp_port">8080</intProp>
+          <stringProp name="WebDriverConfig.socks_host"></stringProp>
+          <intProp name="WebDriverConfig.socks_port">8080</intProp>
+          <stringProp name="WebDriverConfig.no_proxy">localhost</stringProp>
+          <boolProp name="WebDriverConfig.maximize_browser">false</boolProp>
+          <boolProp name="WebDriverConfig.reset_per_iteration">false</boolProp>
+          <boolProp name="WebDriverConfig.dev_mode">false</boolProp>
+          <stringProp name="ChromeDriverConfig.chromedriver_path">C:\Program Files (x86)\Selenium WebDriver\ChromeDriver\ChromeDriver.exe</stringProp>
+          <boolProp name="ChromeDriverConfig.android_enabled">false</boolProp>
+          <boolProp name="ChromeDriverConfig.headless_enabled">false</boolProp>
+        </com.googlecode.jmeter.plugins.webdriver.config.ChromeDriverConfig>
+        <hashTree/>
+        <com.googlecode.jmeter.plugins.webdriver.sampler.WebDriverSampler guiclass="com.googlecode.jmeter.plugins.webdriver.sampler.gui.WebDriverSamplerGui" testclass="com.googlecode.jmeter.plugins.webdriver.sampler.WebDriverSampler" testname="jp@gc - WebDriver Sampler" enabled="true">
+          <stringProp name="WebDriverSampler.script">var selenium = JavaImporter(org.openqa.selenium) // WebDriver classes
+var support_ui = JavaImporter(org.openqa.selenium.support.ui)
+var conditions = support_ui.ExpectedConditions
+var wait = new support_ui.WebDriverWait(WDS.browser, 5) // seconds
+
+// https://stackoverflow.com/a/2998822/1015802
+function pad(num, size) {
+  var s = num + &apos;&apos;
+  while (s.length &lt; size) s = &apos;0&apos; + s
+  return s
+}
+
+// https://stackoverflow.com/a/23501062/1015802
+var threadID = WDS.ctx.getThreadNum()
+
+// Assume max 999 threads
+var threadIDPadded = &apos;[&apos; + pad(threadID, 3) + &apos;] &apos;
+
+// Change the browser&apos;s default page load timeout for pages that are slow to load.
+var timeUnit = JavaImporter(java.util.concurrent.TimeUnit)
+var timeouts = WDS.browser.manage().timeouts()
+timeouts.pageLoadTimeout(600, timeUnit.TimeUnit.SECONDS) // 10 minutes
+
+// Variables - supplied by CLI
+var url      = WDS.vars.get(&apos;URL&apos;)
+var username = WDS.vars.get(&apos;USERNAME&apos;)
+var password = WDS.vars.get(&apos;PASSWORD&apos;)
+
+// Constants
+var PROJECT_NAME = &apos;my-project&apos;
+var APP_NAME = &apos;nodejs-centos-ex&apos;
+
+// Script variables
+var element
+var selector
+
+// Start sampling
+WDS.sampleResult.sampleStart()
+
+WDS.log.info(threadIDPadded + &apos;&gt; GET &apos; + url)
+WDS.browser.get(url) // redirects to login URL
+WDS.log.info(threadIDPadded + &apos;&lt; GET &apos; + url + &apos; Title: &apos; + WDS.browser.getTitle())
+//java.lang.Thread.sleep(1000)
+
+
+// username - use wait.until to allow for redirect to login URL
+WDS.log.info(threadIDPadded + &apos;&gt; presenceOfElementLocated by ID: inputUsername&apos;)
+element = wait.until(conditions.presenceOfElementLocated(selenium.By.id(&apos;inputUsername&apos;)))
+WDS.log.info(threadIDPadded + &apos;&lt; presenceOfElementLocated by ID: inputUsername&apos;)
+
+WDS.log.info(threadIDPadded + &apos;&gt; sendKeys(username)&apos;)
+element.sendKeys(username)
+WDS.log.info(threadIDPadded + &apos;&lt; sendKeys(username)&apos;)
+//java.lang.Thread.sleep(1000)
+
+
+// password
+WDS.log.info(threadIDPadded + &apos;&gt; findElement by ID: inputPassword&apos;)
+element = WDS.browser.findElement(selenium.By.id(&apos;inputPassword&apos;))
+WDS.log.info(threadIDPadded + &apos;&lt; findElement by ID: inputPassword&apos;)
+
+WDS.log.info(threadIDPadded + &apos;&gt; sendKeys(&apos; + password + &apos;)&apos;)
+element.sendKeys(password)
+WDS.log.info(threadIDPadded + &apos;&lt; sendKeys(&apos; + password + &apos;)&apos;)
+//ava.lang.Thread.sleep(1000)
+
+
+// login button
+selector = &apos;button.btn.btn-primary.btn-lg&apos;
+WDS.log.info(threadIDPadded + &apos;&gt; findElement by CSS: &apos; + selector)
+element = WDS.browser.findElement(selenium.By.cssSelector(selector))
+WDS.log.info(threadIDPadded + &apos;&lt; findElement by CSS: &apos; + selector)
+
+WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+element.click()
+WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+//java.lang.Thread.sleep(1000)
+
+
+// Home page: open created project
+WDS.log.info(threadIDPadded + &apos;&gt; presenceOfElementLocated by link text: &apos; + PROJECT_NAME)
+element = wait.until(conditions.presenceOfElementLocated(selenium.By.linkText(PROJECT_NAME)))
+WDS.log.info(threadIDPadded + &apos;&lt; presenceOfElementLocated by link text: &apos; + PROJECT_NAME)
+
+WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+element.click()
+WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+//java.lang.Thread.sleep(1000)
+
+
+// Expand the deployment
+selector = &apos;/html/body/div/div/div/div/div/div[2]/div/div/div/div[2]/overview-list-row/div/div/div[1]/div/a/span/span[1]&apos;
+WDS.log.info(threadIDPadded + &apos;&gt; findElement by xpath: &apos; + selector)
+element = WDS.browser.findElement(selenium.By.xpath(selector))
+WDS.log.info(threadIDPadded + &apos;&lt; findElement by xpath: &apos; + selector)
+
+WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+element.click()
+WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+//java.lang.Thread.sleep(5000)
+
+
+// Sidebar: expand Builds.
+selector = &apos;/html/body/osc-header/sidebar/div/nav/ul/li[3]/a/span[2]&apos;
+WDS.log.info(threadIDPadded + &apos;&gt; findElement by xpath: &apos; + selector)
+element = WDS.browser.findElement(selenium.By.xpath(selector))
+WDS.log.info(threadIDPadded + &apos;&lt; findElement by xpath: &apos; + selector)
+
+WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+element.click()
+WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+//java.lang.Thread.sleep(1000)
+
+// Sidebar: click Builds.
+selector = &apos;/html/body/osc-header/sidebar/div/nav/ul/li[3]/div/div/ul/li[1]/a/span&apos;
+WDS.log.info(threadIDPadded + &apos;&gt; findElement by xpath: &apos; + selector)
+element = WDS.browser.findElement(selenium.By.xpath(selector))
+WDS.log.info(threadIDPadded + &apos;&lt; findElement by xpath: &apos; + selector)
+
+WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+element.click()
+WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+//java.lang.Thread.sleep(5000)
+
+// Builds view: click link for last build.
+selector = &apos;/html/body/div[1]/div/div/div[2]/div/div/div/table/tbody/tr/td[2]/span/a&apos;
+WDS.log.info(threadIDPadded + &apos;&gt; findElement by xpath: &apos; + selector)
+element = WDS.browser.findElement(selenium.By.xpath(selector))
+WDS.log.info(threadIDPadded + &apos;&lt; findElement by xpath: &apos; + selector)
+
+WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+element.click()
+WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+//java.lang.Thread.sleep(5000)
+
+// Builds view: click Logs tab.
+selector = &apos;/html/body/div[1]/div/div/div[2]/div/div/div/div/ul/li[3]/a/uib-tab-heading&apos;
+WDS.log.info(threadIDPadded + &apos;&gt; findElement by xpath: &apos; + selector)
+element = WDS.browser.findElement(selenium.By.xpath(selector))
+WDS.log.info(threadIDPadded + &apos;&lt; findElement by xpath: &apos; + selector)
+
+WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+element.click()
+WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+//java.lang.Thread.sleep(5000)
+
+
+// logout link must be visible in order to click; first expand its parent
+// user dropdown: expand items
+selector = &apos;//*[@id=&quot;user-dropdown&quot;]/span[2]&apos;
+WDS.log.info(threadIDPadded + &apos;&gt; findElement by xpath: &apos; + selector)
+element = WDS.browser.findElement(selenium.By.xpath(selector))
+WDS.log.info(threadIDPadded + &apos;&lt; findElement by xpath: &apos; + selector)
+
+WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+element.click()
+WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+
+
+// logout link
+selector = &apos;//a[contains(@href, &quot;logout&quot;)]&apos;
+WDS.log.info(threadIDPadded + &apos;&gt; findElement by xpath: &apos; + selector)
+element = WDS.browser.findElement(selenium.By.xpath(&apos;//a[contains(@href, &apos;logout&apos;)]&apos;))
+WDS.log.info(threadIDPadded + &apos;&lt; findElement by xpath: &apos; + selector)
+
+WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+element.click()
+WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+//java.lang.Thread.sleep(1000)
+
+
+// Stop sampling
+WDS.sampleResult.sampleEnd()
+</stringProp>
+          <stringProp name="WebDriverSampler.parameters"></stringProp>
+          <stringProp name="WebDriverSampler.language">javascript</stringProp>
+        </com.googlecode.jmeter.plugins.webdriver.sampler.WebDriverSampler>
+        <hashTree/>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
