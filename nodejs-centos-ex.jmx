@@ -80,17 +80,17 @@ function pad(num, size) {
 }
 
 // https://stackoverflow.com/a/23501062/1015802
-var threadID = WDS.ctx.getThreadNum()
+var threadNum = WDS.ctx.getThreadNum()
 
-// Assume max 999 threads
-var threadIDPadded = &apos;[&apos; + pad(threadID, 3) + &apos;] &apos;
+// Assume max 999 threads.
+logPrefix = &apos;[&apos; + pad(threadNum, 3) + &apos;] &apos;
 
 // Change the browser&apos;s default page load timeout for pages that are slow to load.
 var timeUnit = JavaImporter(java.util.concurrent.TimeUnit)
 var timeouts = WDS.browser.manage().timeouts()
 timeouts.pageLoadTimeout(600, timeUnit.TimeUnit.SECONDS) // 10 minutes
 
-// Variables - supplied by CLI
+// Variables - supplied by command line.
 var url      = WDS.vars.get(&apos;URL&apos;)
 var username = WDS.vars.get(&apos;USERNAME&apos;)
 var password = WDS.vars.get(&apos;PASSWORD&apos;)
@@ -99,142 +99,143 @@ var password = WDS.vars.get(&apos;PASSWORD&apos;)
 var PROJECT_NAME = &apos;my-project&apos;
 var APP_NAME = &apos;nodejs-centos-ex&apos;
 
-// Script variables
+// Script variables.
 var element
 var selector
 
-// Start sampling
+// Start sampling.
 WDS.sampleResult.sampleStart()
 
-WDS.log.info(threadIDPadded + &apos;&gt; GET &apos; + url)
+WDS.log.info(logPrefix + &apos;&gt; GET &apos; + url)
 WDS.browser.get(url) // redirects to login URL
-WDS.log.info(threadIDPadded + &apos;&lt; GET &apos; + url + &apos; Title: &apos; + WDS.browser.getTitle())
+WDS.log.info(logPrefix + &apos;&lt; GET &apos; + url + &apos; Title: &apos; + WDS.browser.getTitle())
 //java.lang.Thread.sleep(1000)
 
 
 // username - use wait.until to allow for redirect to login URL
-WDS.log.info(threadIDPadded + &apos;&gt; presenceOfElementLocated by ID: inputUsername&apos;)
+WDS.log.info(logPrefix + &apos;&gt; User name: wait.until presenceOfElementLocated by ID inputUsername&apos;)
 element = wait.until(conditions.presenceOfElementLocated(selenium.By.id(&apos;inputUsername&apos;)))
-WDS.log.info(threadIDPadded + &apos;&lt; presenceOfElementLocated by ID: inputUsername&apos;)
+WDS.log.info(logPrefix + &apos;&lt; User name: wait.until presenceOfElementLocated by ID inputUsername&apos;)
 
-WDS.log.info(threadIDPadded + &apos;&gt; sendKeys(username)&apos;)
+WDS.log.info(logPrefix + &apos;&gt; sendKeys(&apos; + username + &apos;)&apos;)
 element.sendKeys(username)
-WDS.log.info(threadIDPadded + &apos;&lt; sendKeys(username)&apos;)
+WDS.log.info(logPrefix + &apos;&lt; sendKeys(&apos; + username + &apos;)&apos;)
 //java.lang.Thread.sleep(1000)
 
 
 // password
-WDS.log.info(threadIDPadded + &apos;&gt; findElement by ID: inputPassword&apos;)
+WDS.log.info(logPrefix + &apos;&gt; Password: findElement by ID inputPassword&apos;)
 element = WDS.browser.findElement(selenium.By.id(&apos;inputPassword&apos;))
-WDS.log.info(threadIDPadded + &apos;&lt; findElement by ID: inputPassword&apos;)
+WDS.log.info(logPrefix + &apos;&lt; Password: findElement by ID inputPassword&apos;)
 
-WDS.log.info(threadIDPadded + &apos;&gt; sendKeys(&apos; + password + &apos;)&apos;)
+WDS.log.info(logPrefix + &apos;&gt; sendKeys(&apos; + password + &apos;)&apos;)
 element.sendKeys(password)
-WDS.log.info(threadIDPadded + &apos;&lt; sendKeys(&apos; + password + &apos;)&apos;)
+WDS.log.info(logPrefix + &apos;&lt; sendKeys(&apos; + password + &apos;)&apos;)
 //ava.lang.Thread.sleep(1000)
 
 
 // login button
 selector = &apos;button.btn.btn-primary.btn-lg&apos;
-WDS.log.info(threadIDPadded + &apos;&gt; findElement by CSS: &apos; + selector)
+WDS.log.info(logPrefix + &apos;&gt; Login button: findElement by CSS &apos; + selector)
 element = WDS.browser.findElement(selenium.By.cssSelector(selector))
-WDS.log.info(threadIDPadded + &apos;&lt; findElement by CSS: &apos; + selector)
+WDS.log.info(logPrefix + &apos;&lt; Login button: findElement by CSS &apos; + selector)
 
-WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
-WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
 //java.lang.Thread.sleep(1000)
 
 
 // Home page: open created project
-WDS.log.info(threadIDPadded + &apos;&gt; presenceOfElementLocated by link text: &apos; + PROJECT_NAME)
+WDS.log.info(logPrefix + &apos;&gt; Project: wait.until presenceOfElementLocated by link text &apos; + PROJECT_NAME)
 element = wait.until(conditions.presenceOfElementLocated(selenium.By.linkText(PROJECT_NAME)))
-WDS.log.info(threadIDPadded + &apos;&lt; presenceOfElementLocated by link text: &apos; + PROJECT_NAME)
+WDS.log.info(logPrefix + &apos;&lt; Project: wait.until presenceOfElementLocated by link text &apos; + PROJECT_NAME)
 
-WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
-WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
 //java.lang.Thread.sleep(1000)
 
 
 // Expand the deployment
 selector = &apos;/html/body/div/div/div/div/div/div[2]/div/div/div/div[2]/overview-list-row/div/div/div[1]/div/a/span/span[1]&apos;
-WDS.log.info(threadIDPadded + &apos;&gt; findElement by xpath: &apos; + selector)
-element = WDS.browser.findElement(selenium.By.xpath(selector))
-WDS.log.info(threadIDPadded + &apos;&lt; findElement by xpath: &apos; + selector)
+WDS.log.info(logPrefix + &apos;&gt; Expand deployment: wait.until presenceOfElementLocated by xpath &apos; + selector)
+element = wait.until(conditions.presenceOfElementLocated(selenium.By.xpath(selector)))
+WDS.log.info(logPrefix + &apos;&lt; Expand deployment: wait.until presenceOfElementLocated by xpath &apos; + selector)
 
-WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
-WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
 //java.lang.Thread.sleep(5000)
 
 
 // Sidebar: expand Builds.
 selector = &apos;/html/body/osc-header/sidebar/div/nav/ul/li[3]/a/span[2]&apos;
-WDS.log.info(threadIDPadded + &apos;&gt; findElement by xpath: &apos; + selector)
+WDS.log.info(logPrefix + &apos;&gt; Sidebar - expand Builds menu: findElement by xpath &apos; + selector)
 element = WDS.browser.findElement(selenium.By.xpath(selector))
-WDS.log.info(threadIDPadded + &apos;&lt; findElement by xpath: &apos; + selector)
+WDS.log.info(logPrefix + &apos;&lt; Sidebar - expand Builds menu: findElement by xpath &apos; + selector)
 
-WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
-WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
 //java.lang.Thread.sleep(1000)
 
 // Sidebar: click Builds.
 selector = &apos;/html/body/osc-header/sidebar/div/nav/ul/li[3]/div/div/ul/li[1]/a/span&apos;
-WDS.log.info(threadIDPadded + &apos;&gt; findElement by xpath: &apos; + selector)
+WDS.log.info(logPrefix + &apos;&gt; Sidebar - Builds menu item: findElement by xpath &apos; + selector)
 element = WDS.browser.findElement(selenium.By.xpath(selector))
-WDS.log.info(threadIDPadded + &apos;&lt; findElement by xpath: &apos; + selector)
+WDS.log.info(logPrefix + &apos;&lt; Sidebar - Builds menu item: findElement by xpath &apos; + selector)
 
-WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
-WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
 //java.lang.Thread.sleep(5000)
 
 // Builds view: click link for last build.
+//           &apos;/html/body/div/div/div/div/div/div[2]/div/div/div/div[2]/overview-list-row/div/div/div[2]/div[1]/h3/span/a&apos;
 selector = &apos;/html/body/div[1]/div/div/div[2]/div/div/div/table/tbody/tr/td[2]/span/a&apos;
-WDS.log.info(threadIDPadded + &apos;&gt; findElement by xpath: &apos; + selector)
-element = WDS.browser.findElement(selenium.By.xpath(selector))
-WDS.log.info(threadIDPadded + &apos;&lt; findElement by xpath: &apos; + selector)
+WDS.log.info(logPrefix + &apos;&gt; Link for last build: wait.until visibilityOfElementLocated by xpath &apos; + selector)
+element = wait.until(conditions.visibilityOfElementLocated(selenium.By.xpath(selector)))
+WDS.log.info(logPrefix + &apos;&lt; Link for last build: wait.until visibilityOfElementLocated by xpath &apos; + selector)
 
-WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
-WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
 //java.lang.Thread.sleep(5000)
 
 // Builds view: click Logs tab.
 selector = &apos;/html/body/div[1]/div/div/div[2]/div/div/div/div/ul/li[3]/a/uib-tab-heading&apos;
-WDS.log.info(threadIDPadded + &apos;&gt; findElement by xpath: &apos; + selector)
-element = WDS.browser.findElement(selenium.By.xpath(selector))
-WDS.log.info(threadIDPadded + &apos;&lt; findElement by xpath: &apos; + selector)
+WDS.log.info(logPrefix + &apos;&gt; wait.until presenceOfElementLocated by xpath (Logs tab): &apos; + selector)
+element = wait.until(conditions.presenceOfElementLocated(selenium.By.xpath(selector)))
+WDS.log.info(logPrefix + &apos;&lt; wait.until presenceOfElementLocated by xpath (Logs tab): &apos; + selector)
 
-WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
-WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
 //java.lang.Thread.sleep(5000)
 
 
-// logout link must be visible in order to click; first expand its parent
-// user dropdown: expand items
+// Logout link must be visible in order to click; first expand its parent.
+// User dropdown: expand items.
 selector = &apos;//*[@id=&quot;user-dropdown&quot;]/span[2]&apos;
-WDS.log.info(threadIDPadded + &apos;&gt; findElement by xpath: &apos; + selector)
+WDS.log.info(logPrefix + &apos;&gt; User dropdown: findElement by xpath &apos; + selector)
 element = WDS.browser.findElement(selenium.By.xpath(selector))
-WDS.log.info(threadIDPadded + &apos;&lt; findElement by xpath: &apos; + selector)
+WDS.log.info(logPrefix + &apos;&lt; User dropdown: findElement by xpath &apos; + selector)
 
-WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
-WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
 
 
 // logout link
 selector = &apos;//a[contains(@href, &quot;logout&quot;)]&apos;
-WDS.log.info(threadIDPadded + &apos;&gt; findElement by xpath: &apos; + selector)
-element = WDS.browser.findElement(selenium.By.xpath(&apos;//a[contains(@href, &apos;logout&apos;)]&apos;))
-WDS.log.info(threadIDPadded + &apos;&lt; findElement by xpath: &apos; + selector)
+WDS.log.info(logPrefix + &apos;&gt; Logout link: findElement by xpath &apos; + selector)
+element = WDS.browser.findElement(selenium.By.xpath(selector))
+WDS.log.info(logPrefix + &apos;&lt; Logout link: findElement by xpath &apos; + selector)
 
-WDS.log.info(threadIDPadded + &apos;&gt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
-WDS.log.info(threadIDPadded + &apos;&lt; click()&apos;)
+WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
 //java.lang.Thread.sleep(1000)
 
 
