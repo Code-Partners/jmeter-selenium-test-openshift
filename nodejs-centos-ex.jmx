@@ -85,11 +85,6 @@ var threadNum = WDS.ctx.getThreadNum()
 // Assume max 999 threads.
 logPrefix = &apos;[&apos; + pad(threadNum, 3) + &apos;] &apos;
 
-// Change the browser&apos;s default page load timeout for pages that are slow to load.
-var timeUnit = JavaImporter(java.util.concurrent.TimeUnit)
-var timeouts = WDS.browser.manage().timeouts()
-timeouts.pageLoadTimeout(600, timeUnit.TimeUnit.SECONDS) // 10 minutes
-
 // Variables - supplied by command line.
 var url      = WDS.vars.get(&apos;URL&apos;)
 var username = WDS.vars.get(&apos;USERNAME&apos;)
@@ -169,7 +164,7 @@ WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
 //java.lang.Thread.sleep(5000)
 
 
-// Sidebar: expand Builds.
+// Sidebar: expand Builds menu.
 selector = &apos;/html/body/osc-header/sidebar/div/nav/ul/li[3]/a/span[2]&apos;
 WDS.log.info(logPrefix + &apos;&gt; Sidebar - expand Builds menu: findElement by xpath &apos; + selector)
 element = WDS.browser.findElement(selenium.By.xpath(selector))
@@ -180,7 +175,7 @@ element.click()
 WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
 //java.lang.Thread.sleep(1000)
 
-// Sidebar: click Builds.
+// Sidebar: click Builds menu item.
 selector = &apos;/html/body/osc-header/sidebar/div/nav/ul/li[3]/div/div/ul/li[1]/a/span&apos;
 WDS.log.info(logPrefix + &apos;&gt; Sidebar - Builds menu item: findElement by xpath &apos; + selector)
 element = WDS.browser.findElement(selenium.By.xpath(selector))
