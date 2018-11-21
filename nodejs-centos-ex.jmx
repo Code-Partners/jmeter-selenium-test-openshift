@@ -72,6 +72,19 @@ var support_ui = JavaImporter(org.openqa.selenium.support.ui)
 var conditions = support_ui.ExpectedConditions
 var wait = new support_ui.WebDriverWait(WDS.browser, 5) // seconds
 
+
+// Script arguments - supplied by command line.
+var url      = WDS.vars.get(&apos;URL&apos;)
+var username = WDS.vars.get(&apos;USERNAME&apos;)
+var password = WDS.vars.get(&apos;PASSWORD&apos;)
+
+
+// Constants.
+var PROJECT_NAME = &apos;my-project&apos;
+var APP_NAME = &apos;nodejs-centos-ex&apos;
+
+
+// Convert &apos;num&apos; to a string of length &apos;size&apos; with leading zeroes if required.
 // https://stackoverflow.com/a/2998822/1015802
 function pad(num, size) {
   var s = num + &apos;&apos;
@@ -79,32 +92,31 @@ function pad(num, size) {
   return s
 }
 
+
 // https://stackoverflow.com/a/23501062/1015802
 var threadNum = WDS.ctx.getThreadNum()
 
-// Assume max 999 threads.
-logPrefix = &apos;[&apos; + pad(threadNum, 3) + &apos;] &apos;
 
-// Variables - supplied by command line.
-var url      = WDS.vars.get(&apos;URL&apos;)
-var username = WDS.vars.get(&apos;USERNAME&apos;)
-var password = WDS.vars.get(&apos;PASSWORD&apos;)
+// Assume max 999 threads - 3 characters.
+var logPrefix = &apos;[&apos; + pad(threadNum, 3) + &apos;] &apos;
 
-// Constants
-var PROJECT_NAME = &apos;my-project&apos;
-var APP_NAME = &apos;nodejs-centos-ex&apos;
 
 // Script variables.
+var isDemo = true
 var element
 var selector
+
 
 // Start sampling.
 WDS.sampleResult.sampleStart()
 
+//WDS.browser.manage().window().setPosition(new selenium.Point(2000, 10))
+
 WDS.log.info(logPrefix + &apos;&gt; GET &apos; + url)
 WDS.browser.get(url) // redirects to login URL
-WDS.log.info(logPrefix + &apos;&lt; GET &apos; + url + &apos; Title: &apos; + WDS.browser.getTitle())
-//java.lang.Thread.sleep(1000)
+WDS.log.info(logPrefix + &apos;&lt; GET &apos; + url + &apos;, Title: &apos; + WDS.browser.getTitle())
+if (isDemo)
+  java.lang.Thread.sleep(6000)
 
 
 // username - use wait.until to allow for redirect to login URL
@@ -115,7 +127,8 @@ WDS.log.info(logPrefix + &apos;&lt; User name: wait.until presenceOfElementLocat
 WDS.log.info(logPrefix + &apos;&gt; sendKeys(&apos; + username + &apos;)&apos;)
 element.sendKeys(username)
 WDS.log.info(logPrefix + &apos;&lt; sendKeys(&apos; + username + &apos;)&apos;)
-//java.lang.Thread.sleep(1000)
+if (isDemo)
+  java.lang.Thread.sleep(500)
 
 
 // password
@@ -126,7 +139,8 @@ WDS.log.info(logPrefix + &apos;&lt; Password: findElement by ID inputPassword&ap
 WDS.log.info(logPrefix + &apos;&gt; sendKeys(&apos; + password + &apos;)&apos;)
 element.sendKeys(password)
 WDS.log.info(logPrefix + &apos;&lt; sendKeys(&apos; + password + &apos;)&apos;)
-//ava.lang.Thread.sleep(1000)
+if (isDemo)
+  java.lang.Thread.sleep(500)
 
 
 // login button
@@ -138,7 +152,8 @@ WDS.log.info(logPrefix + &apos;&lt; Login button: findElement by CSS &apos; + se
 WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
 WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
-//java.lang.Thread.sleep(1000)
+if (isDemo)
+  java.lang.Thread.sleep(5000)
 
 
 // Home page: open created project
@@ -149,7 +164,8 @@ WDS.log.info(logPrefix + &apos;&lt; Project: wait.until presenceOfElementLocated
 WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
 WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
-//java.lang.Thread.sleep(1000)
+if (isDemo)
+  java.lang.Thread.sleep(5000)
 
 
 // Expand the deployment
@@ -161,7 +177,8 @@ WDS.log.info(logPrefix + &apos;&lt; Expand deployment: wait.until presenceOfElem
 WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
 WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
-//java.lang.Thread.sleep(5000)
+if (isDemo)
+  java.lang.Thread.sleep(2000)
 
 
 // Sidebar: expand Builds menu.
@@ -173,7 +190,8 @@ WDS.log.info(logPrefix + &apos;&lt; Sidebar - expand Builds menu: findElement by
 WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
 WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
-//java.lang.Thread.sleep(1000)
+if (isDemo)
+  java.lang.Thread.sleep(2000)
 
 // Sidebar: click Builds menu item.
 selector = &apos;/html/body/osc-header/sidebar/div/nav/ul/li[3]/div/div/ul/li[1]/a/span&apos;
@@ -184,7 +202,8 @@ WDS.log.info(logPrefix + &apos;&lt; Sidebar - Builds menu item: findElement by x
 WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
 WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
-//java.lang.Thread.sleep(5000)
+if (isDemo)
+  java.lang.Thread.sleep(2000)
 
 // Builds view: click link for last build.
 //           &apos;/html/body/div/div/div/div/div/div[2]/div/div/div/div[2]/overview-list-row/div/div/div[2]/div[1]/h3/span/a&apos;
@@ -196,7 +215,8 @@ WDS.log.info(logPrefix + &apos;&lt; Link for last build: wait.until visibilityOf
 WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
 WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
-//java.lang.Thread.sleep(5000)
+if (isDemo)
+  java.lang.Thread.sleep(5000)
 
 // Builds view: click Logs tab.
 selector = &apos;/html/body/div[1]/div/div/div[2]/div/div/div/div/ul/li[3]/a/uib-tab-heading&apos;
@@ -207,7 +227,8 @@ WDS.log.info(logPrefix + &apos;&lt; wait.until presenceOfElementLocated by xpath
 WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
 WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
-//java.lang.Thread.sleep(5000)
+if (isDemo)
+  java.lang.Thread.sleep(5000)
 
 
 // Logout link must be visible in order to click; first expand its parent.
@@ -220,6 +241,8 @@ WDS.log.info(logPrefix + &apos;&lt; User dropdown: findElement by xpath &apos; +
 WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
 WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
+if (isDemo)
+  java.lang.Thread.sleep(2000)
 
 
 // logout link
@@ -231,7 +254,8 @@ WDS.log.info(logPrefix + &apos;&lt; Logout link: findElement by xpath &apos; + s
 WDS.log.info(logPrefix + &apos;&gt; click()&apos;)
 element.click()
 WDS.log.info(logPrefix + &apos;&lt; click()&apos;)
-//java.lang.Thread.sleep(1000)
+if (isDemo)
+  java.lang.Thread.sleep(2000)
 
 
 // Stop sampling
